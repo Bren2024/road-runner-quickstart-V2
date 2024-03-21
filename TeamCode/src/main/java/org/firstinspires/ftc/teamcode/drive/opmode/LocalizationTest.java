@@ -59,8 +59,16 @@ public class LocalizationTest extends LinearOpMode {
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
-            telemetry.addData("current", drive.rightFrontModule.getModuleRotation());
-            telemetry.addData("target", drive.rightFrontModule.getTargetRotation());
+            telemetry.addData("currentF", drive.rightFrontModule.getModuleRotation());
+            telemetry.addData("targetF", drive.rightFrontModule.getTargetRotation());
+            telemetry.addData("rawTargetF", drive.rightFrontModule.rawTarget);
+            telemetry.addData("errorF", drive.rightFrontModule.getModuleRotation() - drive.rightFrontModule.getTargetRotation());
+            telemetry.addData("voltageF", drive.rightFrontModule.getEncoderVoltage());
+            telemetry.addData("currentB", drive.rightRearModule.getModuleRotation());
+            telemetry.addData("targetB", drive.rightRearModule.getTargetRotation());
+            telemetry.addData("rawTargetB", drive.rightRearModule.rawTarget);
+            telemetry.addData("errorB", drive.rightRearModule.getModuleRotation() - drive.rightRearModule.getTargetRotation());
+            telemetry.addData("voltageB", drive.rightRearModule.getEncoderVoltage());
 //            telemetry.addData("imuuuu", drive.getRawExternalHeading());
 //            TelemetryPacket packet = new TelemetryPacket();
 //            Canvas fieldOverlay = packet.fieldOverlay();

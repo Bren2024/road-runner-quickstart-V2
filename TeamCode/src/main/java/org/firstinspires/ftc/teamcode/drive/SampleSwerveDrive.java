@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.drive;
 
-import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
+
+import static com.kauailabs.navx.ftc.AHRS.getInstance;
+import com.kauailabs.navx.ftc.AHRS;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
@@ -18,9 +21,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -59,8 +59,6 @@ public class SampleSwerveDrive extends SwerveDrive {
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
 
-    public static int MAX_PARALLEL_COMMANDS = 8;
-
     private final TrajectorySequenceRunner trajectorySequenceRunner;
 
     private final TrajectoryVelocityConstraint velocityConstraint;
@@ -70,6 +68,10 @@ public class SampleSwerveDrive extends SwerveDrive {
 
     public SwerveModule leftFrontModule, leftRearModule, rightRearModule, rightFrontModule;
     public List<SwerveModule> modules;
+
+    private AHRS navx;
+
+    private double gyroVel;
 
     private final VoltageSensor batteryVoltageSensor;
 
@@ -86,10 +88,10 @@ public class SampleSwerveDrive extends SwerveDrive {
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        leftFrontModule = new SwerveModule(hardwareMap, "mtrLeftFront", "srvoLeftFront", "anaRotationLF");
-        leftRearModule = new SwerveModule(hardwareMap, "mtrLeftBack", "srvoLeftBack", "anaRotationLB");
-        rightFrontModule = new SwerveModule(hardwareMap, "mtrRightFront", "srvoRightFront", "anaRotationRF");
-        rightRearModule = new SwerveModule(hardwareMap, "mtrRightBack", "srvoRightBack", "anaRotationRB");
+        leftFrontModule = new SwerveModule(hardwareMap, "mtrLeftFront", "srvoLeftFront", "anaRotationLF", 0);
+        leftRearModule = new SwerveModule(hardwareMap, "mtrLeftBack", "srvoLeftBack", "anaRotationLB", 1);
+        rightFrontModule = new SwerveModule(hardwareMap, "mtrRightFront", "srvoRightFront", "anaRotationRF", 2);
+        rightRearModule = new SwerveModule(hardwareMap, "mtrRightBack", "srvoRightBack", "anaRotationRB", 3);
 
         modules = Arrays.asList(leftFrontModule, leftRearModule, rightRearModule, rightFrontModule);
 
@@ -101,20 +103,21 @@ public class SampleSwerveDrive extends SwerveDrive {
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //TODO instantiate hardware
-
+        navx = getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"),
+                AHRS.DeviceDataType.kProcessedData, (byte) 50);
 
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
-        leftFrontModule.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRearModule.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFrontModule.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightRearModule.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        // setLocalizer(new BetterSwerveLocalizer(this::getExternalHeading, leftFrontModule, leftRearModule, rightRearModule, rightFrontModule));
-        // Original: setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
+         setLocalizer(new BetterSwerveLocalizer(this::getExternalHeading, leftFrontModule, leftRearModule, rightRearModule, rightFrontModule));
+//        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID, batteryVoltageSensor);
     }
@@ -131,13 +134,14 @@ public class SampleSwerveDrive extends SwerveDrive {
         return new TrajectoryBuilder(startPose, startHeading, velocityConstraint, accelConstraint);
     }
 
-    public static TrajectorySequenceBuilder trajectorySequenceBuilder(Pose2d startPose) {
+    public TrajectorySequenceBuilder trajectorySequenceBuilder(Pose2d startPose) {
         return new TrajectorySequenceBuilder(
                 startPose,
                 getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH), getAccelerationConstraint(MAX_ACCEL),
                 MAX_ANG_VEL, MAX_ANG_ACCEL
         );
     }
+
     public static TrajectorySequenceBuilder trajectorySequenceBuilder(Pose2d startPose, double startHeading) {
         return new TrajectorySequenceBuilder(
                 startPose,
@@ -146,6 +150,7 @@ public class SampleSwerveDrive extends SwerveDrive {
                 MAX_ANG_VEL, MAX_ANG_ACCEL
         );
     }
+
     public void turnAsync(double angle) {
         trajectorySequenceRunner.followTrajectorySequenceAsync(
                 trajectorySequenceBuilder(getPoseEstimate())
@@ -185,17 +190,19 @@ public class SampleSwerveDrive extends SwerveDrive {
         return trajectorySequenceRunner.getLastPoseError();
     }
 
-    public void updateModules(){
-        for (SwerveModule module : modules) {
-            module.update();
-        }
+    private void updateModules() {
+        leftFrontModule.update();
+        leftRearModule.update();
+        rightFrontModule.update();
+        rightRearModule.update();
     }
+
     public void update() {
         updateModules();
+        updateGyroVelocity();
         updatePoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
-
     }
 
     public void waitForIdle() {
@@ -273,15 +280,28 @@ public class SampleSwerveDrive extends SwerveDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFrontModule.setMotorPower(v);
-        leftRearModule.setMotorPower(v1);
-        rightRearModule.setMotorPower(v2);
-        rightFrontModule.setMotorPower(v3);
+        leftFrontModule.setMotorPower(v/2d);
+        leftRearModule.setMotorPower(v1/2d);
+        rightFrontModule.setMotorPower(v2/2d);
+        rightRearModule.setMotorPower(v3/2d);
     }
 
     @Override
     public double getRawExternalHeading() {
-        return 0;
+        return -Math.toRadians(navx.getYaw());
+    }
+
+    double lastHeading = 0;
+    long lastTimestamp = System.currentTimeMillis();
+    public void updateGyroVelocity() {
+        double heading = navx.getYaw();
+        long timestamp = System.currentTimeMillis();
+        double headingDifference = heading-lastHeading;
+        if (headingDifference > 180) {
+            headingDifference -= 360;
+        }
+        gyroVel = headingDifference / (timestamp-lastTimestamp);
+        lastHeading = heading;
     }
 
     @Override
@@ -291,7 +311,7 @@ public class SampleSwerveDrive extends SwerveDrive {
         // expected). This bug does NOT affect orientation.
         //
         // See https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/251 for details.
-        return 0.0;
+        return (double) gyroVel;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
