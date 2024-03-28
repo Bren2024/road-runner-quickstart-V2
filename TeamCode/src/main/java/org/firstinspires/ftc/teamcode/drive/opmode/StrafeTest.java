@@ -27,7 +27,6 @@ public class StrafeTest extends LinearOpMode {
 
         TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d())
                 .strafeRight(DISTANCE)
-                .strafeLeft(DISTANCE)
                 .build();
 
         waitForStart();

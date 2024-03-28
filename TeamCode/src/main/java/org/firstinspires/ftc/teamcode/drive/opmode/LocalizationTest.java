@@ -31,7 +31,6 @@ public class LocalizationTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleSwerveDrive drive = new SampleSwerveDrive(hardwareMap);
 
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -43,10 +42,10 @@ public class LocalizationTest extends LinearOpMode {
             drive.setWeightedDrivePower(
                     new Pose2d(
                             new Vector2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x
+                            -gamepad1.left_stick_y/2d,
+                            -gamepad1.left_stick_x/2d
                                     ).rotated(-drive.getExternalHeading()),
-                             -gamepad1.right_stick_x
+                             -gamepad1.right_stick_x/2d
                     )
             );
             if(gamepad1.right_stick_button) drive.setExternalHeading(0);
@@ -59,16 +58,16 @@ public class LocalizationTest extends LinearOpMode {
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
-            telemetry.addData("currentF", drive.rightFrontModule.getModuleRotation());
-            telemetry.addData("targetF", drive.rightFrontModule.getTargetRotation());
-            telemetry.addData("rawTargetF", drive.rightFrontModule.rawTarget);
-            telemetry.addData("errorF", drive.rightFrontModule.getModuleRotation() - drive.rightFrontModule.getTargetRotation());
-            telemetry.addData("voltageF", drive.rightFrontModule.getEncoderVoltage());
-            telemetry.addData("currentB", drive.rightRearModule.getModuleRotation());
-            telemetry.addData("targetB", drive.rightRearModule.getTargetRotation());
-            telemetry.addData("rawTargetB", drive.rightRearModule.rawTarget);
-            telemetry.addData("errorB", drive.rightRearModule.getModuleRotation() - drive.rightRearModule.getTargetRotation());
-            telemetry.addData("voltageB", drive.rightRearModule.getEncoderVoltage());
+            telemetry.addData("currentL", drive.leftRearModule.getModuleRotation());
+            telemetry.addData("targetL", "raw: %.3f, normalized: %.3f, end: %.3f",
+                    drive.leftRearModule.rawTarget, drive.leftRearModule.normTarget, drive.leftRearModule.getTargetRotation());
+            telemetry.addData("errorL", drive.leftRearModule.getModuleRotation() - drive.leftRearModule.getTargetRotation());
+            telemetry.addData("flippedL", drive.leftRearModule.wheelFlipped ? 1 : 0);
+            telemetry.addData("currentR", drive.rightRearModule.getModuleRotation());
+            telemetry.addData("targetL", "raw: %.3f, normalized: %.3f, end: %.3f",
+                    drive.rightRearModule.rawTarget, drive.rightRearModule.normTarget, drive.rightRearModule.getTargetRotation());
+            telemetry.addData("errorR", drive.rightRearModule.getModuleRotation() - drive.rightRearModule.getTargetRotation());
+            telemetry.addData("flippedR", drive.rightRearModule.wheelFlipped ? 1 : 0);
 //            telemetry.addData("imuuuu", drive.getRawExternalHeading());
 //            TelemetryPacket packet = new TelemetryPacket();
 //            Canvas fieldOverlay = packet.fieldOverlay();

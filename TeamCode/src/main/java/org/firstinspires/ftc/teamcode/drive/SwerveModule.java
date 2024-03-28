@@ -41,14 +41,15 @@ public class SwerveModule {
     private Servo servo;
     private AnalogInput encoder;
 
-    private boolean wheelFlipped = false;
+    public boolean wheelFlipped = false;
 
     private double targetRotation = 0;
 
     private final double DEG_TO_POS = 0.003d; //0=0deg 1=355deg 1/355 = .00282
     private int id;
     public double rawTarget = 0;
-    public double finalTarget = 0;
+    public double normTarget = 0;
+    private double targetPower = 0;
 
     public SwerveModule(DcMotorEx m, Servo s, AnalogInput e) {
         motor = m;
@@ -72,7 +73,10 @@ public class SwerveModule {
     }
 
     public void update() {
-        finishedTurning();
+        if (WAIT_FOR_TARGET)
+            finishedTurning();
+        else
+            waitingForTarget[id] = false;
     }
 
     public void setDirection(DcMotorSimple.Direction direction) {  motor.setDirection(direction);  }
@@ -125,12 +129,13 @@ public class SwerveModule {
     }
     double lastMotorPower = 0;
     public void setMotorPower(double power) {
+        targetPower = power;
         //target check
         double error = getTargetRotation()-getModuleRotation();
 //        if(WAIT_FOR_TARGET && waitingForTarget) {
 //            power *= Math.cos(Range.clip(error, -Math.PI / 2, Math.PI / 2));
 //        }
-        if(WAIT_FOR_TARGET && (waitingForTarget[0] || waitingForTarget[1] || waitingForTarget[2] || waitingForTarget[3])) {
+        if(waitingForTarget[0] || waitingForTarget[1] || waitingForTarget[2] || waitingForTarget[3]) {
             power = 0;
         }
         lastMotorPower = power;
@@ -151,23 +156,29 @@ public class SwerveModule {
 
     public static double MIN_MOTOR_TO_TURN = 0.05;
     public void setTargetRotation(double target) {
-//        if(Math.abs(lastMotorPower) < MIN_MOTOR_TO_TURN){
-//            //add stuff like X-ing preAlign
-//            return;
-//        }
+        if(Math.abs(lastMotorPower) < MIN_MOTOR_TO_TURN){
+            //add stuff like X-ing preAlign
+            return;
+        }
         rawTarget = target;
         if (MOTOR_FLIPPING) {
             double current = getModuleRotation();
 
             //normalize for wraparound
-            if (current - target > Math.PI) current -= (2 * Math.PI);
-            else if (target - current > Math.PI) current += (2 * Math.PI);
+            if (current - target > Math.PI) target += (2 * Math.PI);
+            else if (target - current > Math.PI) target -= (2 * Math.PI);
+
+            normTarget = target;
 
             //flip target
-            if (wheelFlipped && Math.abs(target + (target > 0 ? -Math.PI : Math.PI)) > 2.9)
-                wheelFlipped = false;
             wheelFlipped = (Math.abs(current - target) > (Math.PI / 2 - flipModifier()*FLIP_BIAS))
-                    || (Math.abs(target) > 2.9); // Maximum number of radians the module can turn
+                    || (Math.abs(target) > 2.9); // 2.9: Maximum number of radians the module can turn
+
+            // Unflip target if flipped target is over 2.9
+            if (wheelFlipped && Math.abs(target) < Math.PI - 2.9) {
+                wheelFlipped = false;
+            }
+
             if (wheelFlipped) {
                 target = Angle.norm(target + Math.PI);
                 if (target > Math.PI) {
@@ -175,14 +186,15 @@ public class SwerveModule {
                 }
             }
         }
+        // To reset servo position once not moving
+        if (targetPower == 0) {
+            target = 0;
+        }
         double targetDeg = Math.toDegrees(target);
         servo.setPosition(degToPos(targetDeg));
         targetRotation = target;
     }
 
-    public boolean[] checkWaitingForTarget() {
-        return waitingForTarget;
-    }
     /**
      * Check if module has finished rotating, and set variable accordingly.
      */

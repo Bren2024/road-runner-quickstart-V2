@@ -23,8 +23,6 @@ public class SplineTest extends LinearOpMode {
         if (isStopRequested()) return;
             TrajectorySequence traj = drive.trajectorySequenceBuilder(new Pose2d())
                 .splineToConstantHeading(new Vector2d(30, 30),  0)
-                .setReversed(true)
-                .splineToConstantHeading(new Vector2d(0, 0), Math.toRadians(180))
                 .build();
 
         drive.followTrajectorySequence(traj);

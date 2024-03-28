@@ -32,18 +32,19 @@ public class testServoPos extends LinearOpMode {
 
         while (!isStopRequested()) {
             double pos = Math.atan2(gamepad1.right_stick_x, gamepad1.right_stick_y);
-            drive.setMotorPowers(0.2, 0, 0, 0);
+            drive.setMotorPowers(0, 0, 0, 0);
             drive.setModuleOrientations(pos, pos, pos, pos);
             telemetry.addData("pos", pos);
-            telemetry.addData("current", drive.leftRearModule.getModuleRotation());
-            telemetry.addData("target", drive.leftRearModule.getTargetRotation());
-            telemetry.addData("allErrors", new double[]{
-                    drive.leftFrontModule.getModuleRotation() - drive.leftFrontModule.getTargetRotation(),
-                    drive.leftRearModule.getModuleRotation() - drive.leftRearModule.getTargetRotation(),
-                    drive.rightFrontModule.getModuleRotation() - drive.rightFrontModule.getTargetRotation(),
-                    drive.rightRearModule.getModuleRotation() - drive.rightRearModule.getTargetRotation()
-            });
-
+            telemetry.addData("currentL", drive.leftRearModule.getModuleRotation());
+            telemetry.addData("targetL", drive.leftRearModule.getTargetRotation());
+            telemetry.addData("rawTargetL", drive.leftRearModule.rawTarget);
+            telemetry.addData("errorL", drive.leftRearModule.getModuleRotation() - drive.leftRearModule.getTargetRotation());
+            telemetry.addData("flippedL", drive.leftRearModule.wheelFlipped ? 1 : 0);
+            telemetry.addData("currentR", drive.rightRearModule.getModuleRotation());
+            telemetry.addData("targetR", drive.rightRearModule.getTargetRotation());
+            telemetry.addData("rawTargetR", drive.rightRearModule.rawTarget);
+            telemetry.addData("errorR", drive.rightRearModule.getModuleRotation() - drive.rightRearModule.getTargetRotation());
+            telemetry.addData("flippedR", drive.rightRearModule.wheelFlipped ? 1 : 0);
 //            telemetry.addData("imuuuu", drive.getRawExternalHeading());
 //            TelemetryPacket packet = new TelemetryPacket();
 //            Canvas fieldOverlay = packet.fieldOverlay();

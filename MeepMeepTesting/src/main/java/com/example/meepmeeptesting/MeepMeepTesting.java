@@ -10,16 +10,20 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
+        Pose2d startPose = new Pose2d(15, -63, Math.toRadians(0));
+
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setConstraints(25, 15, Math.toRadians(90), Math.toRadians(90), 17)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(36, -63, Math.toRadians(180)))
-                                .splineTo(new Vector2d(9, -36), Math.toRadians(150))
-                                .waitSeconds(3)
-                                .lineToSplineHeading(new Pose2d(36, -36, Math.toRadians(0)))
-                                .build()
-                );
+                        drive.trajectorySequenceBuilder(startPose)
+                                .strafeTo(new Vector2d(12, -30))
+//                .addDisplacementMarker(() -> {
+//                    piranhadog.autonSpitPixel(this, 750, 1000);
+//                })
+                                .waitSeconds(2)
+                                .strafeTo(new Vector2d(48, -28))
+                                .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
