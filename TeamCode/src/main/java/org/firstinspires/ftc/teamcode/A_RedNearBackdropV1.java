@@ -14,7 +14,7 @@ public class A_RedNearBackdropV1 extends LinearOpMode {
     public void runOpMode() {
         SampleSwerveDrive drive = new SampleSwerveDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(12, -63, Math.toRadians(180));
+        Pose2d startPose = new Pose2d(14.75, -62.5, Math.toRadians(0));
 
         drive.setPoseEstimate(startPose);
 

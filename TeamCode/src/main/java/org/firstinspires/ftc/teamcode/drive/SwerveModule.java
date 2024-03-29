@@ -34,7 +34,7 @@ public class SwerveModule {
 
     public static boolean MOTOR_FLIPPING = true;
 
-    public static double FLIP_BIAS = Math.toRadians(0);
+    public static double FLIP_BIAS = Math.toRadians(15);
 
 
     private DcMotorEx motor;
@@ -154,7 +154,7 @@ public class SwerveModule {
         servo.setPosition(position);
     }
 
-    public static double MIN_MOTOR_TO_TURN = 0.05;
+    public static double MIN_MOTOR_TO_TURN = 0.025;
     public void setTargetRotation(double target) {
         if(Math.abs(lastMotorPower) < MIN_MOTOR_TO_TURN){
             //add stuff like X-ing preAlign

@@ -16,15 +16,12 @@ public class TestAuto extends LinearOpMode {
         SampleSwerveDrive drive = new SampleSwerveDrive(hardwareMap);
         piranhadog.initialize(this);
 
-        Pose2d startPose = new Pose2d(12, -63, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(14.75, -62.5, Math.toRadians(0));
 
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence traj = drive.trajectorySequenceBuilder(startPose)
-                .forward(0.01)
-                .addDisplacementMarker(() -> {
-                    piranhadog.autonSpitPixel(this, 750, 1000);
-                })
+                .strafeTo(new Vector2d(24, -48))
                 .build()
                 ;
 

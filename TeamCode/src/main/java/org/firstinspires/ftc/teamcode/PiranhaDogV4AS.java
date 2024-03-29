@@ -18,11 +18,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 */
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.Blinker;
+import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -109,7 +118,7 @@ public class PiranhaDogV4AS {
         mtrTeeth.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         mtrTeeth.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-//        mtrTeeth.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // mtrTeeth.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         mtrTeeth.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         mtrTeeth.setPower(TEETH_REST_PWR);
 
@@ -194,9 +203,9 @@ public class PiranhaDogV4AS {
 
 
         srvoJaw.setPosition(JAW_SMALL_BITE);
-        linopMode.sleep(1000);
+//        linopMode.sleep(1000);
         mtrTeeth.setPower(TEETH_EAT_PWR + .4);
-        linopMode.sleep(2000);
+        linopMode.sleep(1000);
         srvoJaw.setPosition(JAW_OPEN);
         mtrTeeth.setPower(0);
 
@@ -207,11 +216,11 @@ public class PiranhaDogV4AS {
         // srvoThroatL.setPosition(.21);
 
         // srvoJaw.setPosition(JAW_SPITA);//eject slowly
-        // linopMode.sleep(lSpitMSec);//pixel on matt
+        // linopMode.sleep(lSpitMSec);//pixel on mat
         // srvoJaw.setPosition(JAW_STOP);
 
         // srvoJaw.setPosition(JAW_SPITB);//retract jaw
-        linopMode.sleep(lDroolMSec);//pixel on matt
+        // linopMode.sleep(lDroolMSec);//pixel on mat
         // srvoJaw.setPosition(JAW_STOP);
         // srvoTongue.setPosition(TONGUE_IN);
 

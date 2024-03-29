@@ -18,11 +18,15 @@ public class MeepMeepTesting {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(startPose)
                                 .strafeTo(new Vector2d(12, -30))
-//                .addDisplacementMarker(() -> {
-//                    piranhadog.autonSpitPixel(this, 750, 1000);
-//                })
+                                .addTemporalMarker(() -> {
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                })
                                 .waitSeconds(2)
-                                .strafeTo(new Vector2d(48, -28))
+                                .strafeTo(new Vector2d(50, -29))
                                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)

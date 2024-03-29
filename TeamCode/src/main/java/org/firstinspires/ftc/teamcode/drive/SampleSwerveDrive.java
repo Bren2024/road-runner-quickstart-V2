@@ -73,7 +73,7 @@ public class SampleSwerveDrive extends SwerveDrive {
         accelConstraint = getAccelerationConstraint(MAX_ACCEL);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5)), 0);
+                new Pose2d(0.5, 0.5, Math.toRadians(5)), 0.5);
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
