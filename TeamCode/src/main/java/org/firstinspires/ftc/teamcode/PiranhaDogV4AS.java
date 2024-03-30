@@ -203,7 +203,7 @@ public class PiranhaDogV4AS {
 
 
         srvoJaw.setPosition(JAW_SMALL_BITE);
-//        linopMode.sleep(1000);
+        linopMode.sleep(1000);
         mtrTeeth.setPower(TEETH_EAT_PWR + .4);
         linopMode.sleep(1000);
         srvoJaw.setPosition(JAW_OPEN);

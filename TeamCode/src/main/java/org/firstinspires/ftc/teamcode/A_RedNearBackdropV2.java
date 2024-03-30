@@ -45,17 +45,20 @@ public class A_RedNearBackdropV2 extends LinearOpMode {
                     piranhadog.autonSpitPixel(this, 750, 1000);
                 })
                 .waitSeconds(2)
-                .strafeTo(new Vector2d(50, -30))
+                .strafeTo(new Vector2d(50, -30),
+                        SampleSwerveDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleSwerveDrive.getAccelerationConstraint(15))
                 .build();
 
-        TrajectorySequence midTraj1 = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence midTraj = drive.trajectorySequenceBuilder(startPose)
                 .strafeTo(new Vector2d(26, -24))
-                .build();
-
-        TrajectorySequence midTraj2 = drive.trajectorySequenceBuilder(midTraj1.end())
+                .addTemporalMarker(() -> {
+                    piranhadog.autonSpitPixel(this, 750, 1000);
+                })
+                .waitSeconds(2)
                 .lineToLinearHeading(new Pose2d(50, -35, Math.toRadians(0)),
-                        SampleSwerveDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleSwerveDrive.getAccelerationConstraint(10))
+                        SampleSwerveDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleSwerveDrive.getAccelerationConstraint(15))
                 .build();
 
         TrajectorySequence rightTraj = drive.trajectorySequenceBuilder(startPose)
@@ -64,7 +67,9 @@ public class A_RedNearBackdropV2 extends LinearOpMode {
                     piranhadog.autonSpitPixel(this, 750, 1000);
                 })
                 .waitSeconds(2)
-                .strafeTo(new Vector2d(50, -42))
+                .strafeTo(new Vector2d(50, -42),
+                        SampleSwerveDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleSwerveDrive.getAccelerationConstraint(15))
                 .build();
 
         telemetry.addData(gstrClassName, "Initialized");
@@ -87,10 +92,8 @@ public class A_RedNearBackdropV2 extends LinearOpMode {
             drive.followTrajectory(buildCorrectionTrajectory(leftTraj.end(), 5, 5));
         }
         else if (nPropPos == goggles2.PROP_MID) {
-            drive.followTrajectorySequence(midTraj1);
-            piranhadog.autonSpitPixel(this, 750, 1000);
-            drive.followTrajectorySequence(midTraj2);
-            drive.followTrajectory(buildCorrectionTrajectory(midTraj2.end(), 5, 5));
+            drive.followTrajectorySequence(midTraj);
+            drive.followTrajectory(buildCorrectionTrajectory(midTraj.end(), 5, 5));
         }
         else {
             drive.followTrajectorySequence(rightTraj);
