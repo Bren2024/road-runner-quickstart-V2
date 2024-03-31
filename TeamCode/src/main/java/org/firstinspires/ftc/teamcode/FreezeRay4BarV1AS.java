@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
  * or add a @Disabled annotation to prevent this OpMode from being added to the Driver Station
  */
 
-public class FreezeRayAS {
+public class FreezeRay4BarV1AS {
     
     //this class name
     private String gstrClassName=this.getClass().getSimpleName();

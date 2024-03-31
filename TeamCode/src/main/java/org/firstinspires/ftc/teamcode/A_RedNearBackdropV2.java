@@ -17,8 +17,7 @@ public class A_RedNearBackdropV2 extends LinearOpMode {
     private SampleSwerveDrive drive;
     private Goggles2V3AS goggles2 = new Goggles2V3AS();
     private PiranhaDogV4AS piranhadog = new PiranhaDogV4AS();
-    private FreezeRayAS freezeray = new FreezeRayAS();
-    private RocketAS rocket = new RocketAS();
+    private FreezeRay4BarV1AS freezeray = new FreezeRay4BarV1AS();
     private String gstrClassName=this.getClass().getSimpleName();
 
     @Override
@@ -33,14 +32,13 @@ public class A_RedNearBackdropV2 extends LinearOpMode {
 
         piranhadog.initialize(this);
         freezeray.initialize(this);
-        rocket.initialize(this);
 
         Pose2d startPose = new Pose2d(14.75, -62.5, Math.toRadians(0));
 
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence leftTraj = drive.trajectorySequenceBuilder(startPose)
-                .strafeTo(new Vector2d(12, -36))
+                .lineToSplineHeading(new Pose2d(12, -36, Math.toRadians(180)))
                 .addTemporalMarker(() -> {
                     piranhadog.autonSpitPixel(this, 750, 1000);
                 })

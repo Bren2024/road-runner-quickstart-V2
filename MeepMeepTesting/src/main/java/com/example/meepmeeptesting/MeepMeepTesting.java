@@ -17,16 +17,13 @@ public class MeepMeepTesting {
                 .setConstraints(25, 15, Math.toRadians(90), Math.toRadians(90), 17)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(startPose)
-                                .strafeTo(new Vector2d(12, -30))
+                                .lineToSplineHeading(new Pose2d(12, -36, Math.toRadians(180)))
                                 .addTemporalMarker(() -> {
-                                    try {
-                                        Thread.sleep(1000);
-                                    } catch (InterruptedException e) {
-                                        throw new RuntimeException(e);
-                                    }
+                                    int x;
                                 })
                                 .waitSeconds(2)
-                                .strafeTo(new Vector2d(50, -29))
+                                .setReversed(true)
+                                .lineToSplineHeading(new Pose2d(50, -30))
                                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
