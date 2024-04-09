@@ -84,7 +84,8 @@ public class FreezeRay4BarV1AS {
     public static int RAY_POS_ONE =2000;
     public static int RAY_POS_TWO = 2300;
     public static int RAY_POS_THREE = 2800;
-    
+    public static int RAY_POS_AUTO = 1500;
+
     private static long RAY_POS_INCR = 50l;
     private static double BIPOD_LEFT_NEUTRAL = .504d;
     private static double BIPOD_RIGHT_NEUTRAL = .499d; //.498 too high, .504 too low, .501 too low
@@ -657,8 +658,8 @@ public class FreezeRay4BarV1AS {
         mtrFreezeRayRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         mtrFreezeRayLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         mtrFreezeRayRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        mtrFreezeRayLeft.setTargetPosition(RAY_POS_ONE);
-        mtrFreezeRayRight.setTargetPosition(RAY_POS_ONE);
+        mtrFreezeRayLeft.setTargetPosition(RAY_POS_AUTO);
+        mtrFreezeRayRight.setTargetPosition(RAY_POS_AUTO);
         mtrFreezeRayLeft.setPower(RAY_PWR);
         mtrFreezeRayRight.setPower(RAY_PWR);
         //wait for bar to raise
@@ -670,8 +671,8 @@ public class FreezeRay4BarV1AS {
             }
             if(!mtrFreezeRayLeft.isBusy() && !mtrFreezeRayRight.isBusy()) {
                 bAimed=true;
-            } else if((mtrFreezeRayLeft.getCurrentPosition()>=(RAY_POS_ONE-10)) &&
-                (mtrFreezeRayRight.getCurrentPosition()>=(RAY_POS_ONE-10))) {
+            } else if((mtrFreezeRayLeft.getCurrentPosition()>=(RAY_POS_AUTO-10)) &&
+                (mtrFreezeRayRight.getCurrentPosition()>=(RAY_POS_AUTO-10))) {
                 bAimed=true;
             
             } else {
@@ -716,7 +717,7 @@ public class FreezeRay4BarV1AS {
         unholsterFreezeRay();
         srvoTrigger.setPosition(TRIGGER_CLOSE);
         
-        linopMode.sleep(1000);
+//        linopMode.sleep(1000);
         
         
         
@@ -730,23 +731,23 @@ public class FreezeRay4BarV1AS {
         mtrFreezeRayLeft.setPower(RAY_PWR/2);
         mtrFreezeRayRight.setPower(RAY_PWR/2);
         //wait for holstering
-        while (linopMode.opModeIsActive() && !linopMode.isStopRequested() && !bHolstered) {
-            if ((System.currentTimeMillis() - lTimestamp) > lMaxTime) {
-                linopMode.telemetry.addData(gstrClassName, "timeout");
-                linopMode.telemetry.update();
-                return;
-            }
-            if(!mtrFreezeRayLeft.isBusy() && !mtrFreezeRayRight.isBusy()) {
-                bHolstered=true;
-            } else if((mtrFreezeRayLeft.getCurrentPosition()<10) &&
-                (mtrFreezeRayRight.getCurrentPosition()<10)) {
-                bHolstered=true;
-            
-            } else {
-                linopMode.telemetry.addData(gstrClassName, "motors busy holstering");
-                linopMode.telemetry.update();
-            }
-        }
+//        while (linopMode.opModeIsActive() && !linopMode.isStopRequested() && !bHolstered) {
+//            if ((System.currentTimeMillis() - lTimestamp) > lMaxTime) {
+//                linopMode.telemetry.addData(gstrClassName, "timeout");
+//                linopMode.telemetry.update();
+//                return;
+//            }
+//            if(!mtrFreezeRayLeft.isBusy() && !mtrFreezeRayRight.isBusy()) {
+//                bHolstered=true;
+//            } else if((mtrFreezeRayLeft.getCurrentPosition()<10) &&
+//                (mtrFreezeRayRight.getCurrentPosition()<10)) {
+//                bHolstered=true;
+//
+//            } else {
+//                linopMode.telemetry.addData(gstrClassName, "motors busy holstering");
+//                linopMode.telemetry.update();
+//            }
+//        }
         srvoTrigger.setPosition(TRIGGER_CLOSE);
     }
     /*

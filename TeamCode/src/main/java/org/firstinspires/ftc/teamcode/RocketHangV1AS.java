@@ -18,11 +18,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 */
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.Blinker;
+import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -35,24 +43,22 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
  * or add a @Disabled annotation to prevent this OpMode from being added to the Driver Station
  */
 
-public class PiranhaDogV4AS {
-
+public class RocketHangV1AS  {
+    
     //this class name
     private String gstrClassName=this.getClass().getSimpleName();
-
+    
     //Declare OpMode members
-    private DcMotor mtrTeeth;
-    // private Servo srvoPiranhaDogLeft,srvoPiranhaDogRight;
-    private Servo srvoJaw;
-    // private Servo srvoThroatU;
-    // private Servo srvoThroatL;
-    // private Servo srvoPaw;
-    // private Servo srvoTongue;
+    private DcMotor mtrRocketLeft;
 
     //motor constants
-    private static Double TEETH_EAT_PWR=-.85d, TEETH_PUKE_PWR=.5d, TEETH_REST_PWR = 0d;
+    private static Double LAUNCH_PWR=-0.99d, LAND_PWR=.99d;
 
-
+    //servo positions
+    
+    
+   
+    
     //goBildaServer
     //Max PWM Range    500-2500μsec
     //Max PWM Range (Continuous)    900-2100µsec
@@ -62,27 +68,13 @@ public class PiranhaDogV4AS {
     //private static double PIRANHADOG_RIGHT_CLOSE= 0.45d; //(2100-500)/2000
     //private static double PIRANHADOG_LEFT_OPEN=0.45d; //(2100-500)/2000
     //private static double PIRANHADOG_LEFT_CLOSE = 0.55d; //(900-500)/2000
-    // private static double TONGUE_INIT = .5d;
-    // private static double TONGUE_IN = .6d; //.6
-    // private static double TONGUE_OUT = .40d; //.3
-
-    //HSRM9382TH  serv0
+    
+    
+    //HSRM9382TH  server
     //PWM range 800-2200μsec
     //(pulsewidth-500)/2000
-    //
-    //srvoJaw is this kind of servo
-    //(800-500)/2000 = .15 MIN VALUE
-    //(2200-500)/2000 = .85 MAX VALUE
-    private static double JAW_OPEN = .8125d;
-    private static double JAW_LARGE_BITE = .75d;
-    private static double JAW_MEDIUM_BITE = .735d;
-    private static double JAW_SMALL_BITE = .725d;
-    private static double JAW_SPITA = .6d;
-    private static double JAW_SPITB = .4d;
-    private static double JAW_STOP = .8d;
-
-
-
+    //                                              
+     
     private static Double STICK_DEAD_ZONE=.5;
 /*
     private final int CAPSTATE_IDLE=0;
@@ -94,143 +86,79 @@ public class PiranhaDogV4AS {
     private boolean gbCapStarted=false;
     private int gnCapState = CAPSTATE_IDLE;
     */
-
-
+    
+    
     public void initialize(OpMode opMode) {
-
+  
         opMode.telemetry.addData(gstrClassName, "Initializing...");
-        //opMode.telemetry.addData(gstrClassName, "    Body must be up");
-        //opMode.telemetry.addData(gstrClassName, "    If not, Hit Stop, then re-Init");
-
-        //PiranhaDog Motor
-
-        mtrTeeth = opMode.hardwareMap.get(DcMotor.class, "mtrTeeth");
-        mtrTeeth.setDirection(DcMotorSimple.Direction.REVERSE);
-        mtrTeeth.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        mtrTeeth.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // mtrTeeth.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        mtrTeeth.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        mtrTeeth.setPower(TEETH_REST_PWR);
-
-        //PiranhaDog Servos
-        // srvoPiranhaDogLeft = opMode.hardwareMap.get(Servo.class, "srvoPiranhaDogLeft");
-        // srvoPiranhaDogLeft.setPosition(PIRANHADOG_LEFT_OPEN);
-        // srvoPiranhaDogRight = opMode.hardwareMap.get(Servo.class, "srvoPiranhaDogRight");
-        // srvoPiranhaDogRight.setPosition(PIRANHADOG_RIGHT_OPEN);
-
-        srvoJaw = opMode.hardwareMap.get(Servo.class, "srvoJaw");
-        srvoJaw.setPosition(JAW_OPEN);
-
-
-
-        // srvoThroatU = opMode.hardwareMap.get(Servo.class, "srvoThroatU");
-        // srvoThroatU.setPosition(.5);
-
-        // srvoThroatL = opMode.hardwareMap.get(Servo.class, "srvoThroatL");
-        // srvoThroatL.setPosition(.5);
-
-        // srvoPaw = opMode.hardwareMap.get(Servo.class, "srvoPaw");
-        // srvoPaw.setPosition(.50); //.52 is slight squeeze NOTE!! pixel point rests against back plate, not pixel straight
-
-
-        // srvoTongue = opMode.hardwareMap.get(Servo.class, "srvoTongue");
-        // srvoTongue.setPosition(TONGUE_INIT);//.6
-
+        
+        //Rocket Dress Motor
+        
+        mtrRocketLeft = opMode.hardwareMap.get(DcMotor.class, "mtrRocketLeft");
+        mtrRocketLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        mtrRocketLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
+        //mtrRocketRight = opMode.hardwareMap.get(DcMotor.class, "mtrRocketRight");
+        //mtrRocketRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        //mtrRocketRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // mtrRocketLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
+        
+        mtrRocketLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODERS);
+        //mtrRocketRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODERS);
+        // mtrPiranhaDog.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         opMode.telemetry.addData(gstrClassName, "    Initialized");
-
+        
 
     }
 
     public void operate(OpMode opMode) {
-        opMode.telemetry.addData("PiranhaDog","Jaw:%.2f",
-                srvoJaw.getPosition());
+        opMode.telemetry.addData(gstrClassName,"Rocket L:%.2f",
+        mtrRocketLeft.getPower());
+        //mtrRocketRight.getPower());
 
-        // move upper jaw
-        if (opMode.gamepad2.dpad_up){
-            srvoJaw.setPosition(JAW_OPEN);
-            mtrTeeth.setPower(TEETH_PUKE_PWR);
+         //launch
+        if(opMode.gamepad2.left_stick_y < -.5) {
+            mtrRocketLeft.setPower(LAUNCH_PWR);
+           // mtrRocketRight.setPower(LAUNCH_PWR);
+            
             return;
-        }
-        else if (opMode.gamepad2.dpad_down){
-            srvoJaw.setPosition(JAW_SMALL_BITE);
-            mtrTeeth.setPower(TEETH_EAT_PWR);
+        } 
+        else if(opMode.gamepad2.left_stick_y >.5){
+            mtrRocketLeft.setPower(LAND_PWR);
+            //mtrRocketRight.setPower(LAND_PWR);
+
             return;
+        } 
+        else if(opMode.gamepad2.left_stick_x > .5) {
+            
+            //mtrRocketRight.setPower(LAND_PWR);
         }
-        else if (opMode.gamepad2.dpad_left){
-            srvoJaw.setPosition(JAW_MEDIUM_BITE);
-            mtrTeeth.setPower(TEETH_EAT_PWR);
+        else if(opMode.gamepad2.left_stick_x <- .5) {
+            
+            mtrRocketLeft.setPower(LAND_PWR);
+        }
+        /*
+        else if(opMode.gamepad2.right_stick_y < -.5) {
+            mtrRocketRight.setPower(LAUNCH_PWR);
+
             return;
-        }
-        else if (opMode.gamepad2.dpad_right){
-            srvoJaw.setPosition(JAW_LARGE_BITE);
-            mtrTeeth.setPower(TEETH_EAT_PWR);
+        } 
+        else if(opMode.gamepad2.right_stick_y > .5){
+            mtrRocketRight.setPower(LAND_PWR);
+            
             return;
+        } 
+        */
+        else
+        {
+            mtrRocketLeft.setPower(0);
+            //mtrRocketRight.setPower(0);
         }
-
-        // srvoTongue.setPosition(TONGUE_IN);
-        //intake
-
-        if(opMode.gamepad2.left_bumper) {//intake pixel
-            mtrTeeth.setPower(TEETH_EAT_PWR);
-            return;
-        }
-        else if(opMode.gamepad2.left_trigger >= .5){//eject pixel
-            mtrTeeth.setPower(TEETH_PUKE_PWR);
-            return;
-        }
-        else {
-            srvoJaw.setPosition(JAW_OPEN);
-            mtrTeeth.setPower(TEETH_REST_PWR);
-        }
-
-
-
-
     }
-
-    public void autonSpitPixel(LinearOpMode linopMode,long lSpitMSec,long lDroolMSec) {
-        srvoJaw.setPosition(JAW_SMALL_BITE);
-        linopMode.sleep(1000);
-        mtrTeeth.setPower(TEETH_EAT_PWR + .4);
-        linopMode.sleep(1000);
-        srvoJaw.setPosition(JAW_OPEN);
-        mtrTeeth.setPower(0);
-
-        //srvoTongue.setPosition(TONGUE_OUT);
-        //linopMode.sleep(500);
-        // srvoTongue.setPosition(TONGUE_OUT);
-        // srvoThroatU.setPosition(.21);
-        // srvoThroatL.setPosition(.21);
-
-        // srvoJaw.setPosition(JAW_SPITA);//eject slowly
-        // linopMode.sleep(lSpitMSec);//pixel on mat
-        // srvoJaw.setPosition(JAW_STOP);
-
-        // srvoJaw.setPosition(JAW_SPITB);//retract jaw
-        // linopMode.sleep(lDroolMSec);//pixel on mat
-        // srvoJaw.setPosition(JAW_STOP);
-        // srvoTongue.setPosition(TONGUE_IN);
-
-        // srvoThroatU.setPosition(.5);
-        // srvoThroatL.setPosition(.5);
-
-    }
-
-    public void setTeethPwr(double power) {
-        mtrTeeth.setPower(power);
-    }
-
     public void shutdown(OpMode opMode) {
         return;
     }
-
-    // public void openPaw(OpMode opMode) {
-    //     srvoPaw.setPosition(.42); //.47
-
-    //     return;
-    // }
     /*
     public void autonExtendNeckLOp(LinearOpMode linopMode, int nExtendPos) {
         int nNeckCurrPos=mtrGiraffe.getCurrentPosition();
@@ -252,11 +180,11 @@ public class PiranhaDogV4AS {
             mtrGiraffe.setPower(0d);
         }
     }
-
+    
     public void autonNeckDownLOp(LinearOpMode linopMode) {
         srvoGiraffeNeck.setPosition(GIRAFFE_NECK_DOWN);
     }
-
+    
     public void autonNeckUpLOp(LinearOpMode linopMode) {
         srvoGiraffeNeck.setPosition(GIRAFFE_NECK_UP);
     }
@@ -264,7 +192,7 @@ public class PiranhaDogV4AS {
     public void autonOpenMouthLOp(LinearOpMode linopMode) {
         srvoGiraffeMouth.setPosition(GIRAFFE_MOUTH_OPEN);
     }
-
+    
     public void autonCloseMouthLOp(LinearOpMode linopMode) {
         srvoGiraffeMouth.setPosition(GIRAFFE_MOUTH_CLOSED);
     }
@@ -280,9 +208,9 @@ public class PiranhaDogV4AS {
             gnCapState=CAPSTATE_BITING;
             srvoGiraffeMouth.setPosition(GIRAFFE_BITE_ELEMENT);
         }
-
-
-
+            
+        
+        
         switch(gnCapState){
             case CAPSTATE_IDLE:
                 return CAPSTATE_IDLE;
@@ -292,7 +220,7 @@ public class PiranhaDogV4AS {
                    glCapTimeStamp=lTimeStamp;
                    gnCapState=CAPSTATE_RAISING_NECK;
                    return CAPSTATE_RAISING_NECK;
-
+               
                 }
                 return CAPSTATE_BITING;
             case CAPSTATE_RAISING_NECK: //raising neck
@@ -308,19 +236,19 @@ public class PiranhaDogV4AS {
                     dPwr=GIRAFFE_EXTEND_PWR;
                     mtrGiraffe.setPower(GIRAFFE_EXTEND_PWR);
                     return (CAPSTATE_EXTENDING_NECK);
-
+                    
                 }
                 //done extending
                 mtrGiraffe.setPower(0d);
-
+                
                 gnCapState=CAPSTATE_IDLE;
                 gbCapStarted=false;
                 return (gnCapState);
             default:
-                return (gnCapState);
+                return (gnCapState); 
         }
-
-
+    
+        
     }
     */
 }

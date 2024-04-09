@@ -351,7 +351,6 @@ public class Goggles2V3AS {
      * find position of prop
      * @param linopMode
      * @param lTimeout
-     * @param nTFODCam  RED_CAM or BLUE_CAM
      * @return PROP_NONE, PPRP_LEFT, PROP_MID, PROP_RIGHT
      *
      */
