@@ -58,16 +58,16 @@ public class LocalizationTest extends LinearOpMode {
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
-            telemetry.addData("currentL", drive.leftRearModule.getModuleRotation());
-            telemetry.addData("targetL", "raw: %.3f, normalized: %.3f, end: %.3f",
-                    drive.leftRearModule.rawTarget, drive.leftRearModule.normTarget, drive.leftRearModule.getTargetRotation());
-            telemetry.addData("errorL", drive.leftRearModule.getModuleRotation() - drive.leftRearModule.getTargetRotation());
-            telemetry.addData("flippedL", drive.leftRearModule.wheelFlipped ? 1 : 0);
-            telemetry.addData("currentR", drive.rightRearModule.getModuleRotation());
-            telemetry.addData("targetL", "raw: %.3f, normalized: %.3f, end: %.3f",
-                    drive.rightRearModule.rawTarget, drive.rightRearModule.normTarget, drive.rightRearModule.getTargetRotation());
-            telemetry.addData("errorR", drive.rightRearModule.getModuleRotation() - drive.rightRearModule.getTargetRotation());
-            telemetry.addData("flippedR", drive.rightRearModule.wheelFlipped ? 1 : 0);
+//            telemetry.addData("currentL", drive.leftRearModule.getModuleRotation());
+//            telemetry.addData("targetL", "raw: %.3f, normalized: %.3f, end: %.3f",
+//                    drive.leftRearModule.rawTarget, drive.leftRearModule.normTarget, drive.leftRearModule.getTargetRotation());
+//            telemetry.addData("errorL", drive.leftRearModule.getModuleRotation() - drive.leftRearModule.getTargetRotation());
+//            telemetry.addData("flippedL", drive.leftRearModule.wheelFlipped ? 1 : 0);
+//            telemetry.addData("currentR", drive.rightRearModule.getModuleRotation());
+//            telemetry.addData("targetR", "raw: %.3f, normalized: %.3f, end: %.3f",
+//                    drive.rightRearModule.rawTarget, drive.rightRearModule.normTarget, drive.rightRearModule.getTargetRotation());
+//            telemetry.addData("errorR", drive.rightRearModule.getModuleRotation() - drive.rightRearModule.getTargetRotation());
+//            telemetry.addData("flippedR", drive.rightRearModule.wheelFlipped ? 1 : 0);
 //            telemetry.addData("imuuuu", drive.getRawExternalHeading());
 //            TelemetryPacket packet = new TelemetryPacket();
 //            Canvas fieldOverlay = packet.fieldOverlay();

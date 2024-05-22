@@ -10,17 +10,16 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(750);
 
-        Pose2d startPose = new Pose2d(-36.75, -62.5, Math.toRadians(0));//11.25-48(two tiles)
+        Pose2d startPose = new Pose2d(11.25, -62.5, Math.toRadians(0));
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(30, 20, Math.toRadians(120), Math.toRadians(120), 17)
+                .setConstraints(25, 15, Math.toRadians(120), Math.toRadians(120), 17)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(startPose)
-                                .lineToLinearHeading(new Pose2d(-38.0, -33, Math.toRadians(90))) //x:18-48(two tiles)-8 (other side of prop)
-                                .lineToLinearHeading(new Pose2d(-42.0, -58.5, Math.toRadians(0))) //x:18-48(two tiles)-8 (other side of prop)
-                                .splineToConstantHeading(new Vector2d(0, -58.5), Math.toRadians(0))
-                                .splineToConstantHeading(new Vector2d(50, -35), Math.toRadians(30))
+                                .lineToLinearHeading(new Pose2d(19, -35.5, Math.toRadians(90)))
+                                .strafeTo(new Vector2d(20, -40))
+                                .lineToLinearHeading(new Pose2d(51,-36, Math.toRadians(0)))
                                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)

@@ -18,6 +18,7 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.CorrectionSegment;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.SequenceSegment;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.TrajectorySegment;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.TurnSegment;
@@ -179,6 +180,15 @@ public class TrajectorySequenceRunner {
                 if (deltaTime >= currentSegment.getDuration()) {
                     currentSegmentIndex++;
                 }
+            } else if (currentSegment instanceof CorrectionSegment) {
+                lastPoseError = new Pose2d();
+
+                targetPose = currentSegment.getStartPose();
+                driveSignal = follower.update(poseEstimate, poseVelocity);
+
+                if (deltaTime >= currentSegment.getDuration()) {
+                    currentSegmentIndex++;
+                }
             }
 
             while (remainingMarkers.size() > 0 && deltaTime > remainingMarkers.get(0).getTime()) {
@@ -242,6 +252,12 @@ public class TrajectorySequenceRunner {
                     fieldOverlay.setStrokeWidth(1);
                     fieldOverlay.setStroke(COLOR_INACTIVE_WAIT);
                     fieldOverlay.strokeCircle(pose.getX(), pose.getY(), 3);
+                } else if (segment instanceof CorrectionSegment) {
+                    Pose2d pose = segment.getStartPose();
+
+                    fieldOverlay.setStrokeWidth(1);
+                    fieldOverlay.setStroke(COLOR_INACTIVE_WAIT);
+                    fieldOverlay.strokeCircle(pose.getX(), pose.getY(), 3);
                 }
             }
         }
@@ -260,6 +276,12 @@ public class TrajectorySequenceRunner {
                 fieldOverlay.setFill(COLOR_ACTIVE_TURN);
                 fieldOverlay.fillCircle(pose.getX(), pose.getY(), 3);
             } else if (currentSegment instanceof WaitSegment) {
+                Pose2d pose = currentSegment.getStartPose();
+
+                fieldOverlay.setStrokeWidth(1);
+                fieldOverlay.setStroke(COLOR_ACTIVE_WAIT);
+                fieldOverlay.strokeCircle(pose.getX(), pose.getY(), 3);
+            } else if (currentSegment instanceof CorrectionSegment) {
                 Pose2d pose = currentSegment.getStartPose();
 
                 fieldOverlay.setStrokeWidth(1);

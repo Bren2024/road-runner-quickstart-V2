@@ -2958,7 +2958,7 @@ if(gbDebug) System.out.printf("   RB Rot:%.2f mag:%.2f\n",avecRot[RB].getPolarAn
 
     /**
      *
-     * @param OpMode  OpMode to use
+     * @param opMode  OpMode to use
      * Sets the resultant vector from direction vector and rotation vector
      */
     private void setvectorSwerveModulesRes(OpMode opMode) {

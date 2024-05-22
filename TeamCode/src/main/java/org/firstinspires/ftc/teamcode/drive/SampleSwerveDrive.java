@@ -181,15 +181,7 @@ public class SampleSwerveDrive extends SwerveDrive {
         return trajectorySequenceRunner.getLastPoseError();
     }
 
-    private void updateModules() {
-        leftFrontModule.update();
-        leftRearModule.update();
-        rightFrontModule.update();
-        rightRearModule.update();
-    }
-
     public void update() {
-        updateModules();
         updateGyroVelocity();
         updatePoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());

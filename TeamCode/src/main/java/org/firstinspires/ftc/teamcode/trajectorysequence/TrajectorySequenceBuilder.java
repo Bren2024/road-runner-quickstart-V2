@@ -19,6 +19,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.acmerobotics.roadrunner.util.Angle;
 
+import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.CorrectionSegment;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.SequenceSegment;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.TrajectorySegment;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.TurnSegment;
@@ -435,6 +436,16 @@ public class TrajectorySequenceBuilder {
         return turn(angle, currentTurnConstraintMaxAngVel, currentTurnConstraintMaxAngAccel);
     }
 
+    /**
+     * UNTESTED: Field-relative turn
+     * @param angle field-relative angle in radians
+     * @return
+     */
+    public TrajectorySequenceBuilder turnTo(double angle) {
+        return turn((angle-lastPose.getHeading()+3*Math.PI)%(2*Math.PI)-Math.PI, // Clamp between -π & π
+        currentTurnConstraintMaxAngVel, currentTurnConstraintMaxAngAccel);
+    }
+
     public TrajectorySequenceBuilder turn(double angle, double maxAngVel, double maxAngAccel) {
         pushPath();
 
@@ -462,6 +473,19 @@ public class TrajectorySequenceBuilder {
         sequenceSegments.add(new WaitSegment(lastPose, seconds, Collections.emptyList()));
 
         currentDuration += seconds;
+        return this;
+    }
+
+    /**
+     * UNTESTED: Acts like a wait, but also corrects robot position
+     * @param timeout time to spend correcting
+     * @return
+     */
+    public TrajectorySequenceBuilder correction(double timeout) {
+        pushPath();
+        sequenceSegments.add(new CorrectionSegment(lastPose, timeout, Collections.emptyList()));
+
+        currentDuration += timeout;
         return this;
     }
 

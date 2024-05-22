@@ -14,9 +14,11 @@ public class PiranhaTailAS {
 
     private Servo srvoTail;
 
-    private static double TAIL_BETWEEN_LEGS = .493d;
-    private static double TAIL_REST = .48d;
-    private static double TAIL_FLICK = .32d; //.5  - very little,  .3 - too much, .07 - too much, .8 - other way
+    public static double TAIL_BETWEEN_LEGS = .493d;
+    public static double TAIL_REST = .48d;
+    public static double TAIL_FLICK = .315d; //.5  - very little,  .3 - too much, .07 - too much, .8 - other way //.32
+
+    public static double TAIL_HFLICK = .375d; //.39
     private static double TAIL_WAG = .38d;
     public static int TAIL_INIT_AUTON = 0;
     public static int TAIL_INIT_TELEOP = 1;
@@ -81,6 +83,11 @@ public class PiranhaTailAS {
         srvoTail.setPosition(TAIL_BETWEEN_LEGS);
 
 
+    }
+
+    public void autonSetFlickPixel(LinearOpMode linopMode, double Position) {
+
+        srvoTail.setPosition(Position);
     }
 
 
